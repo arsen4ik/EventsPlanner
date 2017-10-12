@@ -1,0 +1,22 @@
+﻿@model  PagedList.IPagedList<EventsPlanner.Models.Event>
+@using PagedList.Mvc;
+
+
+@{
+    ViewBag.Title = "SubscribedEvents";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="container">
+    <h2>Subscribed Events</h2>
+
+       
+            @{ Html.RenderPartial("_EventsShow", Model); }
+
+
+            @if (Model.PageCount > 1)
+                {
+                    @Html.PagedListPager(Model, page => Url.Action("SubscribedEvents", new { page }))
+            }
+</div>

@@ -1,0 +1,131 @@
+﻿@model  PagedList.IPagedList<EventsPlanner.Models.Event>
+@using PagedList.Mvc;
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+            <h2>All Events</h2>
+            @if (Request.IsAuthenticated)
+            {
+                <div class="but-right">
+                    <button type="button" onClick="location.href = '/User/CreateEvent'" class="btn btn-success">Create Event</button>
+                </div>
+            }
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <table id="tableReport" class="table table-hover table-striped ">
+                <tbody>
+                    @foreach (var ev in Model)
+                    {
+
+                        <tr class="media">
+                            <td class="media-body">
+                                <h4 class="media-heading font-yellow">@ev.eventDate</h4>
+                                <h4 class="media-heading font-yellow text-bold">@ev.name (@ev.SubscribedUsers.Count of @ev.maxSubscribedUsers Users)</h4>
+                                <div class="list-inline">
+                                    @{int kf = 0;}
+
+                                    @foreach (var evf in ev.EventFields)
+                                    {
+                                        kf++;
+                                        if (kf < 3)
+                                        {
+                                            <span><strong>@evf.name:</strong> <span>@evf.value</span></span>
+                                        }
+                                        else
+                                        {
+                                            <span class="hidden-xs"><strong>@evf.name:</strong> <span>@evf.value</span></span>
+                                        }
+                                    }
+                                </div>
+                            </td>
+                            <td class="media-subscribe">
+                                @if (Request.IsAuthenticated)
+                                {
+                                    <button type="button" id="@string.Format("btn{0}", ev.id)" class="@string.Format("btn btn-info {0}", ev.SubscribedUsers.Count >= ev.maxSubscribedUsers && ev.isSubscribed == false ? "disabled" : "")" onclick="subscribe(@ev.id)">@(ev.isSubscribed == true ? "Unsubscribe" : "Subscribe")</button>
+                                }
+                                else
+                                {
+                                    <button type="button" id="@string.Format("btn{0}", ev.id)" class="@string.Format("btn btn-info {0}", ev.SubscribedUsers.Count >= ev.maxSubscribedUsers ? "disabled" : "")" onclick="regSubscribeShow(@ev.id)">Subscribe</button>
+                                }
+                            </td>
+                        </tr>
+                   }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    @if (Model.PageCount > 1)
+    {
+        @Html.PagedListPager(Model, page => Url.Action("Index", new { page }))
+    }
+</div>
+
+
+@section scripts{
+
+    <script type="text/javascript" language="javascript">
+        var isSubscribe = false;
+        function subscribe(id) {
+            //var change = document.getElementById("btn" + id);
+            //if (change.innerHTML == "Unsubscribe")
+            //    change.innerHTML = "Subscribe";
+            //else
+            //    change.innerHTML = "Unsubscribe";
+
+            $.ajax({
+                type: "POST",
+                url: '/User/SubscribeToEvent',
+                data: {
+                    eventId: id
+                },
+                dataType: 'json',
+                success: function (response) {
+                    if (response.subscribed) {
+
+                        document.getElementById("btn" + id).innerHTML = "Unsubscribe";
+
+                    }
+                    else {
+                        document.getElementById("btn" + id).innerHTML = "Subscribe";
+
+                    }
+                }
+            });
+        }
+
+
+        function regSubscribeShow(id) {
+            isSubscribe = true;
+            $("#register").attr('value', 'Subscribe');
+            $("#EventId").attr('value', id);
+
+            $('#RegForm').modal();
+
+        }
+        function regShow() {
+            isSubscribe = false;
+            $("#register").attr('value', 'Register');
+            $("#EventId").attr('value', -1);
+            $('#RegForm').modal();
+
+        }
+        function regRet() {
+            if (isSubscribe)
+                $("#register").attr('value', 'Subscribe');
+            else
+                $("#register").attr('value', 'Register');
+
+        }
+
+    </script>
+}

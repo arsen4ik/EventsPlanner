@@ -1,0 +1,20 @@
+﻿
+@model string
+
+<div class="modal-dialog modal-sm">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button class="close" type="button" data-dismiss="modal">
+                <i class="fa fa-close"></i>
+            </button>
+            <h4>Registration</h4>
+        </div>
+        <div class="modal-body">
+            <p style="text-align:left;">@Model</p>
+        </div>
+        <div class="modal-footer">
+            <a class="btn btn-default" data-dismiss="modal" data-ajax="true" data-ajax-method="Get" data-ajax-mode="replace" data-ajax-update="#RegForm" href="/Account/Registration">OK</a>
+        </div>
+
+    </div>
+</div>

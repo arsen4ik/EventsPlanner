@@ -1,0 +1,107 @@
+﻿@model EventsPlanner.Models.CreateEventViewModel
+
+@{
+    ViewBag.Title = "CreateEvent";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Create Event</h2>
+<div class="container">
+
+    @using (Html.BeginForm("CreateEvent", "User", null, FormMethod.Post, new { role = "form" }))
+
+    {
+        @Html.AntiForgeryToken()
+
+        @Html.ValidationSummary(true, "", new { @class = "col-md-offset-3 text-danger" })
+        <div class="row">
+            <div class="col-sm-3 nopadding">
+                <div class="form-group">
+                    <input type="text" class="form-control" id="EventName" name="EventName" value="" placeholder="Event Name">
+                    @Html.ValidationMessageFor(model => model.EventName, "", new { @class = "text-danger" })
+
+
+                </div>
+            </div>
+
+            <div class="col-sm-3 nopadding">
+                <div class="form-group">
+                    <div class='input-group date'>
+                        <input id='datetimepicker1' type='text' name="EventDate" class="form-control" placeholder="Event Date" />
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.EventDate, "", new { @class = "text-danger" })
+                </div>
+
+            </div>
+            <div class="col-sm-3 nopadding">
+                <div class="form-group">
+                    <input type="number" class="form-control" id="Maxusers" name="MaxSubscribedUsers" value="" placeholder="Max Users">
+                    @Html.ValidationMessageFor(model => model.MaxSubscribedUsers, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+        <h4>Additionally fields:</h4>
+            <div id="education_fields">
+            </div>
+
+            <div class="col-sm-3 nopadding">
+                <div class="form-group">
+                    <input type="text" class="form-control" id="FieldName" name="Fields[0].Name" value="" placeholder="Name">
+                </div>
+            </div>
+            <div class="col-sm-3 nopadding">
+                <div class="form-group">
+                    <input type="text" class="form-control" id="FieldDescription" name="Fields[0].Description" value="" placeholder="Description">
+                </div>
+            </div>
+            <div class="input-group-btn">
+                <button class="btn btn-success" type="button" onclick="education_fields();"> <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> </button>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-3 but-float">
+                    <div class="form-group">
+                        <input type="submit" value="Create" class="btn btn-primary" style="margin-top: 15px;" />
+                    </div>
+                </div>
+            </div>
+
+    }
+</div>
+
+
+@section scripts{
+
+    <script type="text/javascript" language="javascript">
+
+        var room = 1;
+        $(function () {
+            $('#datetimepicker1').datetimepicker();
+        });
+
+
+        function education_fields() {
+
+            room++;
+            var objTo = document.getElementById('education_fields');
+            var divtest = document.createElement("div");
+            divtest.setAttribute("class", "form-group removeclass" + room);
+            var rdiv = 'removeclass' + room;
+            divtest.innerHTML = '<div class="col-sm-3 nopadding"><div class="form-group"><input type="text" class="form-control" id="FieldName" name="Fields[' + (room - 1) + '].Name" value="" placeholder="Name"></div></div><div class="col-sm-3 nopadding"><div class="form-group"><input type="text" class="form-control" id="FieldDescription" name="Fields[' + (room - 1) + '].Description" value="" placeholder="Description"></div></div><div class="input-group-btn"><button class="btn btn-danger" type="button" onclick="remove_education_fields(' + room + ');"> <span class="glyphicon glyphicon-minus" aria-hidden="true"></span> </button></div>';
+
+            objTo.appendChild(divtest)
+            
+        }
+        function remove_education_fields(rid) {
+            $('.removeclass' + rid).remove();
+            var childs = $('#education_fields').children().each(function (index, element) {
+                $(element).find('#FieldName').attr('name', 'Fields[' + (index + 1) + '].Name');
+                $(element).find('#FieldDescription').attr('name', 'Fields[' + (index + 1) + '].Description');
+            });
+        }
+
+    </script>
+}

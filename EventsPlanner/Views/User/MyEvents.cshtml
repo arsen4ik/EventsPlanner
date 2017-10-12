@@ -1,0 +1,35 @@
+﻿
+@model  PagedList.IPagedList<EventsPlanner.Models.Event>
+@using PagedList.Mvc;
+
+@{
+    ViewBag.Title = "MyEvents";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+            <h2>My Events</h2>
+            @if (Request.IsAuthenticated)
+            {
+                <div class="but-right">
+                    <button type="button" onClick="location.href = '/User/CreateEvent'" class="btn btn-success">Create Event</button>
+                </div>
+            }
+        </div>
+    </div>
+
+    @{
+        Html.RenderPartial("_EventsShow", Model);
+    }
+    @if (Model.PageCount > 1)
+    {
+
+        @Html.PagedListPager(Model, page => Url.Action("MyEvents", new { page }))
+    }
+
+</div>
